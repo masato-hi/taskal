@@ -9,7 +9,7 @@ DISTDIR=./dist
 BINARY_NAME=taskal
 BINARY_UNIX=$(BINARY_NAME)_unix
 
-all: test build
+all: build
 
 build:
 	$(GOFMT)
@@ -20,7 +20,8 @@ build-release:
 	$(GOBUILD) -o "$(DISTDIR)/$(BINARY_NAME)" -v -tags=release
 
 test:
-	$(GOTEST) -v ./...
+	$(GOFMT)
+	$(GOTEST) -tags debug -v ./...
 
 clean:
 	$(GOCLEAN)

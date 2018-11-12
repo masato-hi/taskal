@@ -33,10 +33,6 @@ func Info(format string, a ...interface{}) {
 	fmt.Fprintln(Stdout)
 }
 
-func InfoOfCommand(format string, a ...interface{}) {
-	Info(color.HiBlackString(format, a...))
-}
-
 func Warn(format string, a ...interface{}) {
 	fmt.Fprintf(Stderr, color.HiYellowString("[WARN]"))
 	fmt.Fprintf(Stderr, color.HiWhiteString("[%s] ", TimeStamp()))

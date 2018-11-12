@@ -1,9 +1,15 @@
-build: &build
+_format: &format
   - go fmt
+
+build: &build
+  - *format
   - go build -o ./bin/taskal -v
 run:
   - *build
   - bin/taskal $@
+test:
+  - *format
+  - go test -tags debug -v $@
 clean:
   - go clean
   - rm -f ./bin/*
@@ -11,7 +17,7 @@ clean:
   - rm -f ./tmp/*
 
 build-debug: &build-debug
-  - go fmt
+  - *format
   - go build -tags debug -o ./tmp/taskal -v
 debug:
   - *build-debug
