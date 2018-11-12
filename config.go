@@ -55,7 +55,10 @@ var ParseConfig = func(data string) (Config, error) {
 	config := &ConfigImpl{}
 
 	var document = make(Document)
-	yaml.Unmarshal([]byte(data), &document)
+	if err := yaml.Unmarshal([]byte(data), &document); err != nil {
+		Error(err.Error())
+		return nil, err
+	}
 
 	var task DefinedTask
 	for taskName, rootNode := range document {
