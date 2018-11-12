@@ -4,10 +4,12 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOFMT=$(GOCMD) fmt
 GOGET=$(GOCMD) get
+GOTOOL=$(GOCMD) tool
 BINDIR=./bin
 DISTDIR=./dist
 BINARY_NAME=taskal
 BINARY_UNIX=$(BINARY_NAME)_unix
+COVERFILE=./tmp/cover.out
 
 all: build
 
@@ -21,7 +23,10 @@ build-release:
 
 test:
 	$(GOFMT)
-	$(GOTEST) -tags debug -v ./...
+	$(GOTEST) -tags debug -v -coverprofile=$(COVERFILE) ./...
+
+cover:
+	$(GOTOOL) cover -func=$(COVERFILE)
 
 clean:
 	$(GOCLEAN)

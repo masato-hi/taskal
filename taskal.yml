@@ -9,12 +9,21 @@ run:
   - bin/taskal $@
 test:
   - *format
-  - go test -tags debug -v $@
+  - go test -tags debug -v -coverprofile=tmp/cover.out $@
 clean:
   - go clean
   - rm -f ./bin/*
   - rm -f ./dist/*
   - rm -f ./tmp/*
+cover:
+  - |
+    if [ -e "tmp/cover.out" ]; then
+      go tool cover -func=tmp/cover.out
+    else
+      echo "coverage file not exits."
+      echo "Please execute \"taskal test\" first."
+      exit 1
+    fi
 
 build-debug: &build-debug
   - *format
