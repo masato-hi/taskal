@@ -1,0 +1,19 @@
+build: &build
+  - go fmt
+  - go build -o ./bin/taskal -v
+run:
+  - *build
+  - bin/taskal $@
+clean:
+  - go clean
+  - rm -f ./bin/*
+  - rm -f ./dist/*
+  - rm -f ./tmp/*
+
+build-debug: &build-debug
+  - go fmt
+  - go build -tags debug -o ./tmp/taskal -v
+debug:
+  - *build-debug
+  - tmp/taskal $@
+

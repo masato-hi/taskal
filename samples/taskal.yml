@@ -1,0 +1,24 @@
+hoge: &hoge echo fuga; echo $@
+hoge2:
+  echo fuga
+hoge3:
+  - echo fuga
+foo: &foo
+  - echo bar
+  - echo baz
+_foobar: &foobar echo foobar
+foo2:
+  - echo bar
+  - |
+    echo '  hoge
+    fuga
+    piyo'
+  - |
+    echo "hoge
+    fuga
+    piyo"
+  - *hoge
+  - *foo
+  - *foobar
+  - echo 'always error'; false
+
