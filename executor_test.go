@@ -69,7 +69,7 @@ func TestExecutorImpl_Execute(t *testing.T) {
 		expected := "  output message"
 		assert.Equal(expected, actual)
 
-		assert.Nil(err)
+		assert.NoError(err)
 	})
 }
 
@@ -304,6 +304,6 @@ func TestExecutorImpl_execCommand(t *testing.T) {
 		expected := make([]byte, 0)
 		assert.Equal(expected, actual)
 
-		assert.Nil(err)
+		assert.NoError(err)
 	})
 }

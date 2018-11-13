@@ -170,7 +170,7 @@ func TestReadConfig(t *testing.T) {
 		expected := "foo:\n  - echo bar\n  - echo baz\n"
 		assert.Equal(expected, actual)
 
-		assert.Nil(err)
+		assert.NoError(err)
 	})
 
 	t.Run("When config file not exists.", func(t *testing.T) {
@@ -231,10 +231,10 @@ func TestParseConfig(t *testing.T) {
 			expected := (*Config)(nil)
 			assert.Implements(expected, actual)
 
-			assert.Nil(err)
+			assert.NoError(err)
 
 			expected2 := 0
-			assert.Equal(expected2, len(actual.DefinedTasks()))
+			assert.Len(actual.DefinedTasks(), expected2)
 		})
 
 		t.Run("Has once task.", func(t *testing.T) {
@@ -246,10 +246,10 @@ func TestParseConfig(t *testing.T) {
 			expected := (*Config)(nil)
 			assert.Implements(expected, actual)
 
-			assert.Nil(err)
+			assert.NoError(err)
 
 			expected2 := 1
-			assert.Equal(expected2, len(actual.DefinedTasks()))
+			assert.Len(actual.DefinedTasks(), expected2)
 
 			expected3 := "foo"
 			assert.Equal(expected3, actual.DefinedTasks()[0].Name())
@@ -269,10 +269,10 @@ func TestParseConfig(t *testing.T) {
 			expected := (*Config)(nil)
 			assert.Implements(expected, actual)
 
-			assert.Nil(err)
+			assert.NoError(err)
 
 			expected2 := 2
-			assert.Equal(expected2, len(actual.DefinedTasks()))
+			assert.Len(actual.DefinedTasks(), expected2)
 
 			expected3 := "bar"
 			assert.Equal(expected3, actual.DefinedTasks()[0].Name())
@@ -308,10 +308,10 @@ func TestParseConfig(t *testing.T) {
 			expected := (*Config)(nil)
 			assert.Implements(expected, actual)
 
-			assert.Nil(err)
+			assert.NoError(err)
 
 			expected2 := 3
-			assert.Equal(expected2, len(actual.DefinedTasks()))
+			assert.Len(actual.DefinedTasks(), expected2)
 
 			expected3 := "bar"
 			assert.Equal(expected3, actual.DefinedTasks()[0].Name())

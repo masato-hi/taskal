@@ -22,6 +22,30 @@ type OptionImpl struct {
 	taskArgs        []string
 }
 
+func (o *OptionImpl) WillBeShowTasks() bool {
+	return o.willBeShowTasks
+}
+
+func (o *OptionImpl) BeDryRun() bool {
+	return o.beDryRun
+}
+
+func (o *OptionImpl) HasSpecifiedTasks() bool {
+	return len(o.specifiedTasks) > 0
+}
+
+func (o *OptionImpl) SpecifiedTasks() []string {
+	return o.specifiedTasks
+}
+
+func (o *OptionImpl) ConfigPath() string {
+	return o.configPath
+}
+
+func (o *OptionImpl) TaskArgs() []string {
+	return o.taskArgs
+}
+
 var ParseOption = func(args []string) (Option, error) {
 	option := &OptionImpl{}
 
@@ -59,28 +83,4 @@ var parseTaskAndArgs = func(args []string) ([]string, []string) {
 	}
 
 	return args, []string{}
-}
-
-func (o *OptionImpl) WillBeShowTasks() bool {
-	return o.willBeShowTasks
-}
-
-func (o *OptionImpl) BeDryRun() bool {
-	return o.beDryRun
-}
-
-func (o *OptionImpl) HasSpecifiedTasks() bool {
-	return len(o.specifiedTasks) > 0
-}
-
-func (o *OptionImpl) SpecifiedTasks() []string {
-	return o.specifiedTasks
-}
-
-func (o *OptionImpl) ConfigPath() string {
-	return o.configPath
-}
-
-func (o *OptionImpl) TaskArgs() []string {
-	return o.taskArgs
 }
