@@ -1,24 +1,15 @@
-hoge: &hoge echo fuga; echo $@
-hoge2:
-  echo fuga
-hoge3:
-  - echo fuga
-foo: &foo
-  - echo bar
-  - echo baz
-_foobar: &foobar echo foobar
-foo2:
-  - echo bar
+_alias: &alias echo "alias" > tmp/alias.out
+single: echo "single" > tmp/single.out
+multi:
+  - echo "multi" > tmp/multi1.out
+  - echo "multi" > tmp/multi2.out
+multiline:
   - |
-    echo '  hoge
-    fuga
-    piyo'
-  - |
-    echo "hoge
-    fuga
-    piyo"
-  - *hoge
-  - *foo
-  - *foobar
-  - echo 'always error'; false
-
+    echo "multiline" > tmp/multiline.out
+    echo "multiline2" >> tmp/multiline.out
+    echo "multiline3" >> tmp/multiline.out
+anchor:
+  - *alias
+  - echo "anchor" > tmp/anchor.out
+subargs:
+  - echo $@ > tmp/subargs.out
