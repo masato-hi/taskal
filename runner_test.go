@@ -1,13 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"github.com/fatih/color"
 	assert2 "github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"
-	"time"
 )
 
 type MockRunner struct {
@@ -19,14 +16,6 @@ func (m *MockRunner) Run() error {
 }
 
 func TestRunnerImpl_Run(t *testing.T) {
-	buffer := &bytes.Buffer{}
-	Stdout = buffer
-	Stderr = buffer
-	color.NoColor = true
-	Now = func() time.Time {
-		return time.Date(2006, 1, 2, 15, 4, 5, 0, time.Local)
-	}
-
 	t.Run("When task is not specified.", func(t *testing.T) {
 		option := new(MockOption)
 		config := new(MockConfig)
@@ -38,7 +27,7 @@ func TestRunnerImpl_Run(t *testing.T) {
 		option.On("HasSpecifiedTasks").Return(false)
 
 		t.Run("And return errors.", func(t *testing.T) {
-			buffer.Reset()
+			iobuffer.Reset()
 
 			assert := assert2.New(t)
 			actual := runner.Run()
@@ -47,17 +36,17 @@ func TestRunnerImpl_Run(t *testing.T) {
 		})
 
 		t.Run("And log error messages.", func(t *testing.T) {
-			buffer.Reset()
+			iobuffer.Reset()
 
 			assert := assert2.New(t)
 			runner.Run()
 			expected := "[ERROR][15:04:05] Task is not specified\n"
-			assert.Equal(expected, buffer.String())
+			assert.Equal(expected, iobuffer.String())
 		})
 	})
 
 	t.Run("When specified task is not defined.", func(t *testing.T) {
-		buffer.Reset()
+		iobuffer.Reset()
 
 		option := new(MockOption)
 		config := new(MockConfig)
@@ -82,7 +71,7 @@ func TestRunnerImpl_Run(t *testing.T) {
 	})
 
 	t.Run("When specified task is defined.", func(t *testing.T) {
-		buffer.Reset()
+		iobuffer.Reset()
 
 		option := new(MockOption)
 		config := new(MockConfig)
@@ -126,14 +115,6 @@ func TestRunnerImpl_Run(t *testing.T) {
 }
 
 func TestRunnerImpl_specifiedDefinedTasks(t *testing.T) {
-	buffer := &bytes.Buffer{}
-	Stdout = buffer
-	Stderr = buffer
-	color.NoColor = true
-	Now = func() time.Time {
-		return time.Date(2006, 1, 2, 15, 4, 5, 0, time.Local)
-	}
-
 	t.Run("Found specified Tasks.", func(t *testing.T) {
 		assert := assert2.New(t)
 		option := new(MockOption)
@@ -205,7 +186,7 @@ func TestRunnerImpl_specifiedDefinedTasks(t *testing.T) {
 		assert.Errorf(err, expected)
 
 		expected2 := "[WARN][15:04:05] Specified task is not defined. task: pii\n"
-		assert.Equal(expected2, buffer.String())
+		assert.Equal(expected2, iobuffer.String())
 	})
 }
 

@@ -50,8 +50,8 @@ func (d *DefinedTaskImpl) Run(dryRun bool, args []string) error {
 }
 
 func (d *DefinedTaskImpl) runOnce(dryRun bool, command string, args []string) error {
-	executer := NewExecuter(dryRun, command, args)
-	if out, err := executer.Execute(); err != nil {
+	executor := NewExecutor(dryRun, command, args)
+	if out, err := executor.Execute(); err != nil {
 		Error(err.Error())
 
 		if len(out) > 0 {

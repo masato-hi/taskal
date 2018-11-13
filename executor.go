@@ -7,21 +7,21 @@ import (
 	"strings"
 )
 
-type Executer interface {
+type Executor interface {
 	Execute() (string, error)
 }
 
-type ExecuterImpl struct {
+type ExecutorImpl struct {
 	dryRun  bool
 	command string
 	args    []string
 }
 
-var NewExecuter = func(dryRun bool, command string, args []string) Executer {
-	return &ExecuterImpl{dryRun, command, args}
+var NewExecutor = func(dryRun bool, command string, args []string) Executor {
+	return &ExecutorImpl{dryRun, command, args}
 }
 
-func (e *ExecuterImpl) Execute() (string, error) {
+func (e *ExecutorImpl) Execute() (string, error) {
 	raw, err := e.executeInner()
 	out := TrimTailingSpace(string(raw))
 
@@ -32,7 +32,7 @@ func (e *ExecuterImpl) Execute() (string, error) {
 	}
 }
 
-func (e *ExecuterImpl) executeInner() ([]byte, error) {
+func (e *ExecutorImpl) executeInner() ([]byte, error) {
 	if runtime.GOOS == "windows" {
 		return e.executeWindows()
 	} else {
@@ -40,12 +40,12 @@ func (e *ExecuterImpl) executeInner() ([]byte, error) {
 	}
 }
 
-func (e *ExecuterImpl) executeWindows() ([]byte, error) {
+func (e *ExecutorImpl) executeWindows() ([]byte, error) {
 	Info(color.HiBlackString(e.command))
 	return e.execCommand(e.command)
 }
 
-func (e *ExecuterImpl) executeUnix() ([]byte, error) {
+func (e *ExecutorImpl) executeUnix() ([]byte, error) {
 	execArgs := []string{
 		"-c",
 		e.command,
@@ -63,7 +63,7 @@ func (e *ExecuterImpl) executeUnix() ([]byte, error) {
 	return e.execCommand("sh", execArgs...)
 }
 
-func (e ExecuterImpl) execCommand(name string, args ...string) ([]byte, error) {
+func (e ExecutorImpl) execCommand(name string, args ...string) ([]byte, error) {
 	if !e.dryRun {
 		return doExecCommand(name, args...)
 	} else {
