@@ -15,7 +15,7 @@ type CLI interface {
 type CLIImpl struct {
 }
 
-func NewCLI() CLI {
+var NewCLI = func() CLI {
 	return &CLIImpl{}
 }
 

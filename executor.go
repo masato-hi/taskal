@@ -22,7 +22,7 @@ var NewExecutor = func(dryRun bool, command string, args []string) Executor {
 }
 
 func (e *ExecutorImpl) Execute() (string, error) {
-	raw, err := e.executeInner()
+	raw, err := e.execInner()
 	out := TrimTailingSpace(string(raw))
 
 	if err == nil {
@@ -32,20 +32,20 @@ func (e *ExecutorImpl) Execute() (string, error) {
 	}
 }
 
-func (e *ExecutorImpl) executeInner() ([]byte, error) {
+func (e *ExecutorImpl) execInner() ([]byte, error) {
 	if runtime.GOOS == "windows" {
-		return e.executeWindows()
+		return e.execOnWindows()
 	} else {
-		return e.executeUnix()
+		return e.execOnUnix()
 	}
 }
 
-func (e *ExecutorImpl) executeWindows() ([]byte, error) {
-	Info(color.HiBlackString(e.command))
-	return e.execCommand(e.command)
+func (e *ExecutorImpl) execOnWindows() ([]byte, error) {
+	Info(color.HiBlackString("exec %s", QuoteString(e.command)))
+	return e.execCommand("exec", e.command)
 }
 
-func (e *ExecutorImpl) executeUnix() ([]byte, error) {
+func (e *ExecutorImpl) execOnUnix() ([]byte, error) {
 	execArgs := []string{
 		"-c",
 		e.command,
