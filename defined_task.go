@@ -6,8 +6,8 @@ import (
 )
 
 type DefinedTask interface {
-	AddCommand(string)
 	Name() string
+	AddCommand(string)
 	Commands() []string
 	Run(bool, []string) error
 }
@@ -24,13 +24,13 @@ var NewDefinedTask = func(name string) DefinedTask {
 	}
 }
 
+func (d *DefinedTaskImpl) Name() string {
+	return d.name
+}
+
 func (d *DefinedTaskImpl) AddCommand(command string) {
 	Debug("  Add Command: %s", command)
 	d.commands = append(d.commands, strings.TrimSpace(command))
-}
-
-func (d *DefinedTaskImpl) Name() string {
-	return d.name
 }
 
 func (d *DefinedTaskImpl) Commands() []string {

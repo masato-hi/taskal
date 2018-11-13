@@ -2,60 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
+	assert2 "github.com/stretchr/testify/assert"
 	"testing"
 )
 
-type MockOption struct {
-	mock.Mock
-}
-
-func (m *MockOption) WillBeShowTasks() bool {
-	return m.Called().Bool(0)
-}
-func (m *MockOption) BeDryRun() bool {
-	return m.Called().Bool(0)
-}
-func (m *MockOption) HasSpecifiedTasks() bool {
-	return m.Called().Bool(0)
-}
-func (m *MockOption) SpecifiedTasks() []string {
-	return []string{m.Called().String(0)}
-}
-func (m *MockOption) ConfigPath() string {
-	return m.Called().String(0)
-}
-func (m *MockOption) TaskArgs() []string {
-	return []string{m.Called().String(0)}
-}
-
-type MockConfig struct {
-	mock.Mock
-}
-
-func (m *MockConfig) ShowAllDefinedTasks() {
-	m.Called()
-}
-func (m *MockConfig) AddDefinedTask(task DefinedTask) {
-	m.Called(task)
-}
-func (m *MockConfig) DefinedTasks() []DefinedTask {
-	m.Called()
-	return []DefinedTask{}
-}
-
-type MockRunner struct {
-	mock.Mock
-}
-
-func (m *MockRunner) Run() error {
-	return m.Called().Error(0)
-}
-
 func TestNewCLI(t *testing.T) {
 	t.Run("Will expected to returns CLI implementation.", func(t *testing.T) {
-		assert := assert.New(t)
+		assert := assert2.New(t)
 
 		actual := NewCLI()
 		expected := (*CLI)(nil)
@@ -68,7 +21,7 @@ func TestCLIImpl_Run(t *testing.T) {
 	args := []string{"taskal"}
 
 	t.Run("When the option parsing fails.", func(t *testing.T) {
-		assert := assert.New(t)
+		assert := assert2.New(t)
 		ParseOption = func(args []string) (Option, error) {
 			return nil, fmt.Errorf("invalid option")
 		}
@@ -79,7 +32,7 @@ func TestCLIImpl_Run(t *testing.T) {
 	})
 
 	t.Run("When reading config file failed.", func(t *testing.T) {
-		assert := assert.New(t)
+		assert := assert2.New(t)
 		ParseOption = func(args []string) (Option, error) {
 			option := new(MockOption)
 			option.On("ConfigPath").Return("")
@@ -95,7 +48,7 @@ func TestCLIImpl_Run(t *testing.T) {
 	})
 
 	t.Run("When parsing of the config file fails.", func(t *testing.T) {
-		assert := assert.New(t)
+		assert := assert2.New(t)
 		ParseOption = func(args []string) (Option, error) {
 			option := new(MockOption)
 			option.On("ConfigPath").Return("")
@@ -114,7 +67,7 @@ func TestCLIImpl_Run(t *testing.T) {
 	})
 
 	t.Run("When will be show tasks was specified.", func(t *testing.T) {
-		assert := assert.New(t)
+		assert := assert2.New(t)
 		ParseOption = func(args []string) (Option, error) {
 			option := new(MockOption)
 			option.On("ConfigPath").Return("")
@@ -136,7 +89,7 @@ func TestCLIImpl_Run(t *testing.T) {
 	})
 
 	t.Run("When the failed to run Runner.", func(t *testing.T) {
-		assert := assert.New(t)
+		assert := assert2.New(t)
 		ParseOption = func(args []string) (Option, error) {
 			option := new(MockOption)
 			option.On("ConfigPath").Return("")
@@ -162,7 +115,7 @@ func TestCLIImpl_Run(t *testing.T) {
 	})
 
 	t.Run("When the succeeded to run Runner.", func(t *testing.T) {
-		assert := assert.New(t)
+		assert := assert2.New(t)
 		ParseOption = func(args []string) (Option, error) {
 			option := new(MockOption)
 			option.On("ConfigPath").Return("")

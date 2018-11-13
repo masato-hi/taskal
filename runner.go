@@ -24,7 +24,11 @@ func (r *RunnerImpl) Run() error {
 		return fmt.Errorf("task is not specified")
 	}
 
-	tasks := r.specifiedDefinedTasks()
+	tasks, err := r.specifiedDefinedTasks()
+	if err != nil {
+		return err
+	}
+
 	for _, task := range tasks {
 		if err := r.runOnce(task); err != nil {
 			return err
@@ -33,21 +37,29 @@ func (r *RunnerImpl) Run() error {
 	return nil
 }
 
-func (r *RunnerImpl) specifiedDefinedTasks() []DefinedTask {
+func (r *RunnerImpl) specifiedDefinedTasks() ([]DefinedTask, error) {
 	var tasks []DefinedTask
 	for _, specifiedTask := range r.Option.SpecifiedTasks() {
+		found := false
+
 		for _, definedTask := range r.Config.DefinedTasks() {
 			if definedTask.Name() == specifiedTask {
 				tasks = append(tasks, definedTask)
+				found = true
+				break
 			}
 		}
+
+		if !found {
+			Warn("Specified task is not defined. task: %s", specifiedTask)
+			return nil, fmt.Errorf("specified task is not defined")
+		}
 	}
-	return tasks
+	return tasks, nil
 }
 
 func (r *RunnerImpl) runOnce(task DefinedTask) error {
 	dryRun := r.Option.BeDryRun()
 	args := r.Option.TaskArgs()
-	task.Run(dryRun, args)
-	return nil
+	return task.Run(dryRun, args)
 }
