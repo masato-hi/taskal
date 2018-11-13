@@ -44,18 +44,18 @@ func (c *ConfigImpl) sortDefinedTasks() {
 
 var ReadConfig = func(path string) (string, error) {
 	if buf, err := ioutil.ReadFile(path); err != nil {
-		Error("Config file parse error. path: %s", path)
+		Error("Config file read error. path: %s", path)
 		return "", err
 	} else {
 		return string(buf), nil
 	}
 }
 
-var ParseConfig = func(data string) (Config, error) {
+var ParseConfig = func(buf string) (Config, error) {
 	config := &ConfigImpl{}
 
 	var document = make(Document)
-	if err := yaml.Unmarshal([]byte(data), &document); err != nil {
+	if err := yaml.Unmarshal([]byte(buf), &document); err != nil {
 		Error(err.Error())
 		return nil, err
 	}

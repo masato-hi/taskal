@@ -20,6 +20,18 @@ func TestCLIImpl_Run(t *testing.T) {
 	target := NewCLI()
 	args := []string{"taskal"}
 
+	originParseOptionFunc := ParseOption
+	originReadConfigFunc := ReadConfig
+	originParseConfigFunc := ParseConfig
+
+	var restoreOriginFunc = func() {
+		ParseOption = originParseOptionFunc
+		ReadConfig = originReadConfigFunc
+		ParseConfig = originParseConfigFunc
+	}
+
+	defer restoreOriginFunc()
+
 	t.Run("When the option parsing fails.", func(t *testing.T) {
 		assert := assert2.New(t)
 		ParseOption = func(args []string) (Option, error) {
