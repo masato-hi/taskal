@@ -7,16 +7,6 @@ import (
 	"testing"
 )
 
-func TestNewCLI(t *testing.T) {
-	assert := assert.New(t)
-
-	t.Run("Will expected to returns CLI implementation.", func(t *testing.T) {
-		actual := NewCLI()
-		expected := (*CLI)(nil)
-		assert.Implements(expected, actual)
-	})
-}
-
 type MockOption struct {
 	mock.Mock
 }
@@ -61,6 +51,16 @@ type MockRunner struct {
 
 func (m *MockRunner) Run() error {
 	return m.Called().Error(0)
+}
+
+func TestNewCLI(t *testing.T) {
+	t.Run("Will expected to returns CLI implementation.", func(t *testing.T) {
+		assert := assert.New(t)
+
+		actual := NewCLI()
+		expected := (*CLI)(nil)
+		assert.Implements(expected, actual)
+	})
 }
 
 func TestCLIImpl_Run(t *testing.T) {
