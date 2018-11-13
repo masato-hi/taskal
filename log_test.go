@@ -9,12 +9,12 @@ import (
 )
 
 func TestPrintf(t *testing.T) {
-	assert := assert.New(t)
 	buffer := &bytes.Buffer{}
 	Stdout = buffer
 	color.NoColor = false
 
 	t.Run("When not passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Printf("Test Printf")
@@ -23,6 +23,7 @@ func TestPrintf(t *testing.T) {
 	})
 
 	t.Run("When passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Printf("Test %s", "Printf2")
@@ -32,7 +33,6 @@ func TestPrintf(t *testing.T) {
 }
 
 func TestDebug(t *testing.T) {
-	assert := assert.New(t)
 	buffer := &bytes.Buffer{}
 	Stdout = buffer
 	color.NoColor = false
@@ -41,6 +41,7 @@ func TestDebug(t *testing.T) {
 	}
 
 	t.Run("When not passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Debug("Test Debug")
@@ -49,6 +50,7 @@ func TestDebug(t *testing.T) {
 	})
 
 	t.Run("When passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Debug("Test %s", "Debug2")
@@ -58,7 +60,6 @@ func TestDebug(t *testing.T) {
 }
 
 func TestInfo(t *testing.T) {
-	assert := assert.New(t)
 	buffer := &bytes.Buffer{}
 	Stdout = buffer
 	color.NoColor = false
@@ -67,6 +68,7 @@ func TestInfo(t *testing.T) {
 	}
 
 	t.Run("When not passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Info("Test Info")
@@ -75,6 +77,7 @@ func TestInfo(t *testing.T) {
 	})
 
 	t.Run("When passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Info("Test %s", "Info2")
@@ -84,7 +87,6 @@ func TestInfo(t *testing.T) {
 }
 
 func TestWarn(t *testing.T) {
-	assert := assert.New(t)
 	buffer := &bytes.Buffer{}
 	Stderr = buffer
 	color.NoColor = false
@@ -93,6 +95,7 @@ func TestWarn(t *testing.T) {
 	}
 
 	t.Run("When not passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Warn("Test Warn")
@@ -101,6 +104,7 @@ func TestWarn(t *testing.T) {
 	})
 
 	t.Run("When passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Warn("Test %s", "Warn2")
@@ -110,7 +114,6 @@ func TestWarn(t *testing.T) {
 }
 
 func TestError(t *testing.T) {
-	assert := assert.New(t)
 	buffer := &bytes.Buffer{}
 	Stderr = buffer
 	color.NoColor = false
@@ -119,6 +122,7 @@ func TestError(t *testing.T) {
 	}
 
 	t.Run("When not passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Error("Test Error")
@@ -127,6 +131,7 @@ func TestError(t *testing.T) {
 	})
 
 	t.Run("When passing format string", func(t *testing.T) {
+		assert := assert.New(t)
 		buffer.Reset()
 
 		Error("Test %s", "Error2")

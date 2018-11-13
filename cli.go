@@ -5,7 +5,7 @@ const (
 	InvalidOption
 	InvalidConfig
 	UnreadConfig
-	ExecutionError
+	FailedExecute
 )
 
 type CLI interface {
@@ -15,13 +15,11 @@ type CLI interface {
 type CLIImpl struct {
 }
 
-func NewCLI() *CLIImpl {
+func NewCLI() CLI {
 	return &CLIImpl{}
 }
 
 func (c *CLIImpl) Run(args []string) int {
-	var err error
-
 	option, err := ParseOption(args)
 	if err != nil {
 		return InvalidOption
@@ -44,7 +42,7 @@ func (c *CLIImpl) Run(args []string) int {
 
 	runner := NewRunner(option, config)
 	if err := runner.Run(); err != nil {
-		return ExecutionError
+		return FailedExecute
 	}
 
 	return Succeeded
