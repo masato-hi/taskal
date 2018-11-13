@@ -53,7 +53,7 @@ var ParseOption = func(args []string) (Option, error) {
 	f.SetOutput(Stderr)
 	f.Usage = func() {
 		fmt.Fprintln(f.Output(), fmt.Sprintf("taskal %s", VERSION))
-		fmt.Fprintln(f.Output(), "Usage: taskal [options...] [tasks ...] -- [args...]")
+		fmt.Fprintln(f.Output(), "Usage: taskal [options...] [tasks ...] -- [optional args ...]")
 		f.PrintDefaults()
 	}
 	f.BoolVar(&option.willBeShowTasks, "T", false, "Show all tasks.")
