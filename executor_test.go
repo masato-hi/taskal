@@ -11,21 +11,20 @@ type MockExecutor struct {
 	mock.Mock
 }
 
-func (m *MockExecutor) Execute() (string, error) {
-	str := m.Called().String(0)
-	ret := m.Called().Get(1)
+func (m *MockExecutor) Execute() error {
+	ret := m.Called().Get(0)
 
 	if v, ok := ret.(error); ok {
-		return str, v
+		return v
 	} else {
-		return str, nil
+		return nil
 	}
 }
 
 func TestExecutorImpl_Execute(t *testing.T) {
-	t.Run("When an error occurred in execInner.", func(t *testing.T) {
-		doExecCommand = func(name string, args ...string) (bytes []byte, e error) {
-			return ([]byte)("  output message  "), fmt.Errorf("  error message  ")
+	t.Run("When an error occurred.", func(t *testing.T) {
+		doExecCommand = func(name string, args ...string) error {
+			return fmt.Errorf("error message")
 		}
 
 		assert := assert2.New(t)
@@ -39,18 +38,14 @@ func TestExecutorImpl_Execute(t *testing.T) {
 			},
 		}
 
-		actual, err := executor.Execute()
+		actual := executor.Execute()
 
-		expected := "  output message"
-		assert.Equal(expected, actual)
-
-		expected2 := "  error message"
-		assert.Error(err, expected2)
+		assert.Error(actual)
 	})
 
-	t.Run("When no error occurred in execInner.", func(t *testing.T) {
-		doExecCommand = func(name string, args ...string) (bytes []byte, e error) {
-			return ([]byte)("  output message  "), nil
+	t.Run("When no error occurred.", func(t *testing.T) {
+		doExecCommand = func(name string, args ...string) error {
+			return nil
 		}
 
 		assert := assert2.New(t)
@@ -64,47 +59,19 @@ func TestExecutorImpl_Execute(t *testing.T) {
 			},
 		}
 
-		actual, err := executor.Execute()
+		actual := executor.Execute()
 
-		expected := "  output message"
-		assert.Equal(expected, actual)
-
-		assert.NoError(err)
+		assert.NoError(actual)
 	})
-}
-
-func TestExecutorImpl_execInner(t *testing.T) {
-	doExecCommand = func(name string, args ...string) (bytes []byte, e error) {
-		return ([]byte)("output message"), fmt.Errorf("error message")
-	}
-
-	assert := assert2.New(t)
-
-	executor := ExecutorImpl{
-		dryRun:  false,
-		command: "echo foo",
-		args: []string{
-			"bar",
-			"baz",
-		},
-	}
-
-	actual, err := executor.execInner()
-
-	expected := ([]byte)("output message")
-	assert.Equal(expected, actual)
-
-	expected2 := "error message"
-	assert.Error(err, expected2)
 }
 
 func TestExecutorImpl_execOnWindows(t *testing.T) {
 	var execName string
 	var execArgs []string
-	doExecCommand = func(name string, args ...string) (bytes []byte, e error) {
+	doExecCommand = func(name string, args ...string) error {
 		execName = name
 		execArgs = args
-		return ([]byte)("output message"), fmt.Errorf("error message")
+		return fmt.Errorf("error message")
 	}
 
 	t.Run("When has not sub command arguments.", func(t *testing.T) {
@@ -120,24 +87,20 @@ func TestExecutorImpl_execOnWindows(t *testing.T) {
 			args:    []string{},
 		}
 
-		actual, err := executor.execOnWindows()
+		actual := executor.execOnWindows()
 
-		expected := ([]byte)("output message")
-		assert.Equal(expected, actual)
+		assert.Error(actual)
 
-		expected2 := "error message"
-		assert.Error(err, expected2)
+		expected := "[INFO][15:04:05] exec \"echo foo\"\n"
+		assert.Equal(expected, iobuffer.String())
 
-		expected3 := "[INFO][15:04:05] exec \"echo foo\"\n"
-		assert.Equal(expected3, iobuffer.String())
+		expected2 := "exec"
+		assert.Equal(expected2, execName)
 
-		expected4 := "exec"
-		assert.Equal(expected4, execName)
-
-		expected5 := []string{
+		expected3 := []string{
 			"echo foo",
 		}
-		assert.Equal(expected5, execArgs)
+		assert.Equal(expected3, execArgs)
 	})
 
 	t.Run("When has sub command arguments.", func(t *testing.T) {
@@ -156,34 +119,30 @@ func TestExecutorImpl_execOnWindows(t *testing.T) {
 			},
 		}
 
-		actual, err := executor.execOnWindows()
+		actual := executor.execOnWindows()
 
-		expected := ([]byte)("output message")
-		assert.Equal(expected, actual)
+		assert.Error(actual)
 
-		expected2 := "error message"
-		assert.Error(err, expected2)
+		expected := "[INFO][15:04:05] exec \"echo foo\"\n"
+		assert.Equal(expected, iobuffer.String())
 
-		expected3 := "[INFO][15:04:05] exec \"echo foo\"\n"
-		assert.Equal(expected3, iobuffer.String())
+		expected2 := "exec"
+		assert.Equal(expected2, execName)
 
-		expected4 := "exec"
-		assert.Equal(expected4, execName)
-
-		expected5 := []string{
+		expected3 := []string{
 			"echo foo",
 		}
-		assert.Equal(expected5, execArgs)
+		assert.Equal(expected3, execArgs)
 	})
 }
 
 func TestExecutorImpl_execOnUnix(t *testing.T) {
 	var execName string
 	var execArgs []string
-	doExecCommand = func(name string, args ...string) (bytes []byte, e error) {
+	doExecCommand = func(name string, args ...string) error {
 		execName = name
 		execArgs = args
-		return ([]byte)("output message"), fmt.Errorf("error message")
+		return fmt.Errorf("error message")
 	}
 
 	t.Run("When has not sub command arguments.", func(t *testing.T) {
@@ -199,25 +158,21 @@ func TestExecutorImpl_execOnUnix(t *testing.T) {
 			args:    []string{},
 		}
 
-		actual, err := executor.execOnUnix()
+		actual := executor.execOnUnix()
 
-		expected := ([]byte)("output message")
-		assert.Equal(expected, actual)
+		assert.Error(actual)
 
-		expected2 := "error message"
-		assert.Error(err, expected2)
+		expected := "[INFO][15:04:05] sh -c \"echo foo\"\n"
+		assert.Equal(expected, iobuffer.String())
 
-		expected3 := "[INFO][15:04:05] sh -c \"echo foo\"\n"
-		assert.Equal(expected3, iobuffer.String())
+		expected2 := "sh"
+		assert.Equal(expected2, execName)
 
-		expected4 := "sh"
-		assert.Equal(expected4, execName)
-
-		expected5 := []string{
+		expected3 := []string{
 			"-c",
 			"echo foo",
 		}
-		assert.Equal(expected5, execArgs)
+		assert.Equal(expected3, execArgs)
 	})
 
 	t.Run("When has sub command arguments.", func(t *testing.T) {
@@ -236,34 +191,30 @@ func TestExecutorImpl_execOnUnix(t *testing.T) {
 			},
 		}
 
-		actual, err := executor.execOnUnix()
+		actual := executor.execOnUnix()
 
-		expected := ([]byte)("output message")
-		assert.Equal(expected, actual)
+		assert.Error(actual)
 
-		expected2 := "error message"
-		assert.Error(err, expected2)
+		expected := "[INFO][15:04:05] sh -c \"echo foo\" -- bar baz\n"
+		assert.Equal(expected, iobuffer.String())
 
-		expected3 := "[INFO][15:04:05] sh -c \"echo foo\" -- bar baz\n"
-		assert.Equal(expected3, iobuffer.String())
+		expected2 := "sh"
+		assert.Equal(expected2, execName)
 
-		expected4 := "sh"
-		assert.Equal(expected4, execName)
-
-		expected5 := []string{
+		expected3 := []string{
 			"-c",
 			"echo foo",
 			"--",
 			"bar",
 			"baz",
 		}
-		assert.Equal(expected5, execArgs)
+		assert.Equal(expected3, execArgs)
 	})
 }
 
 func TestExecutorImpl_execCommand(t *testing.T) {
-	doExecCommand = func(name string, args ...string) (bytes []byte, e error) {
-		return ([]byte)("output message"), fmt.Errorf("error message")
+	doExecCommand = func(name string, args ...string) error {
+		return fmt.Errorf("error message")
 	}
 
 	t.Run("When disabled dry run flag.", func(t *testing.T) {
@@ -278,13 +229,9 @@ func TestExecutorImpl_execCommand(t *testing.T) {
 			"baz",
 		}
 
-		actual, err := executor.execCommand(name, args...)
+		actual := executor.execCommand(name, args...)
 
-		expected := ([]byte)("output message")
-		assert.Equal(expected, actual)
-
-		expected2 := "error message"
-		assert.Error(err, expected2)
+		assert.Error(actual)
 	})
 
 	t.Run("When enable dry run flag.", func(t *testing.T) {
@@ -299,11 +246,8 @@ func TestExecutorImpl_execCommand(t *testing.T) {
 			"baz",
 		}
 
-		actual, err := executor.execCommand(name, args...)
+		actual := executor.execCommand(name, args...)
 
-		expected := make([]byte, 0)
-		assert.Equal(expected, actual)
-
-		assert.NoError(err)
+		assert.NoError(actual)
 	})
 }

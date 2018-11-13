@@ -8,7 +8,7 @@ import (
 )
 
 type Executor interface {
-	Execute() (string, error)
+	Execute() error
 }
 
 type ExecutorImpl struct {
@@ -21,18 +21,7 @@ var NewExecutor = func(dryRun bool, command string, args []string) Executor {
 	return &ExecutorImpl{dryRun, command, args}
 }
 
-func (e *ExecutorImpl) Execute() (string, error) {
-	raw, err := e.execInner()
-	out := TrimTailingSpace(string(raw))
-
-	if err == nil {
-		return out, nil
-	} else {
-		return out, err
-	}
-}
-
-func (e *ExecutorImpl) execInner() ([]byte, error) {
+func (e *ExecutorImpl) Execute() error {
 	if runtime.GOOS == "windows" {
 		return e.execOnWindows()
 	} else {
@@ -40,12 +29,12 @@ func (e *ExecutorImpl) execInner() ([]byte, error) {
 	}
 }
 
-func (e *ExecutorImpl) execOnWindows() ([]byte, error) {
+func (e *ExecutorImpl) execOnWindows() error {
 	Info(color.HiBlackString("exec %s", QuoteString(e.command)))
 	return e.execCommand("exec", e.command)
 }
 
-func (e *ExecutorImpl) execOnUnix() ([]byte, error) {
+func (e *ExecutorImpl) execOnUnix() error {
 	execArgs := []string{
 		"-c",
 		e.command,
@@ -63,14 +52,17 @@ func (e *ExecutorImpl) execOnUnix() ([]byte, error) {
 	return e.execCommand("sh", execArgs...)
 }
 
-func (e ExecutorImpl) execCommand(name string, args ...string) ([]byte, error) {
+func (e ExecutorImpl) execCommand(name string, args ...string) error {
 	if !e.dryRun {
 		return doExecCommand(name, args...)
 	} else {
-		return []byte{}, nil
+		return nil
 	}
 }
 
-var doExecCommand = func(name string, args ...string) ([]byte, error) {
-	return exec.Command(name, args...).CombinedOutput()
+var doExecCommand = func(name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Stdout = Stdout
+	cmd.Stderr = Stderr
+	return cmd.Run()
 }

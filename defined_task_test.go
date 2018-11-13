@@ -190,15 +190,14 @@ func TestDefinedTaskImpl_Run(t *testing.T) {
 		args := []string{"bar"}
 		executor = new(MockExecutor)
 
-		executor.On("Execute").Return("error message", fmt.Errorf("mock return"))
+		executor.On("Execute").Return(fmt.Errorf("mock return"))
 
 		actual := task.Run(dryRun, args)
 
-		expect := "mock return"
-		assert.Error(actual, expect)
+		assert.Error(actual)
 
-		expect2 := "[INFO][15:04:05] Execute task: foo\n[ERROR][15:04:05] mock return\n[ERROR][15:04:05] error message\n"
-		assert.Equal(expect2, iobuffer.String())
+		expect := "[INFO][15:04:05] Execute task: foo\n[ERROR][15:04:05] mock return\n"
+		assert.Equal(expect, iobuffer.String())
 	})
 
 	t.Run("When no error occured in runOnce.", func(t *testing.T) {
@@ -217,14 +216,14 @@ func TestDefinedTaskImpl_Run(t *testing.T) {
 		args := []string{"bar"}
 		executor = new(MockExecutor)
 
-		executor.On("Execute").Return("output message", nil)
+		executor.On("Execute").Return(nil)
 
 		actual := task.Run(dryRun, args)
 
-		assert.Nil(actual)
+		assert.NoError(actual)
 
-		expect2 := "[INFO][15:04:05] Execute task: foo\noutput message\noutput message\n"
-		assert.Equal(expect2, iobuffer.String())
+		expect := "[INFO][15:04:05] Execute task: foo\n"
+		assert.Equal(expect, iobuffer.String())
 	})
 }
 
@@ -235,92 +234,44 @@ func TestDefinedTaskImpl_runOnce(t *testing.T) {
 	}
 
 	t.Run("When at error occurred in executor.", func(t *testing.T) {
-		t.Run("And not return output form executor.", func(t *testing.T) {
-			iobuffer.Reset()
+		iobuffer.Reset()
 
-			assert := assert2.New(t)
+		assert := assert2.New(t)
 
-			task := DefinedTaskImpl{}
-			dryRun := true
-			command := "echo foo"
-			args := []string{"bar"}
-			executor = new(MockExecutor)
+		task := DefinedTaskImpl{}
+		dryRun := true
+		command := "echo foo"
+		args := []string{"bar"}
+		executor = new(MockExecutor)
 
-			executor.On("Execute").Return("", fmt.Errorf("mock return"))
+		executor.On("Execute").Return(fmt.Errorf("mock return"))
 
-			actual := task.runOnce(dryRun, command, args)
+		actual := task.runOnce(dryRun, command, args)
 
-			expect := "mock return"
-			assert.Error(actual, expect)
+		assert.Error(actual)
 
-			expect2 := "[ERROR][15:04:05] mock return\n"
-			assert.Equal(expect2, iobuffer.String())
-		})
-
-		t.Run("And return output form executor.", func(t *testing.T) {
-			iobuffer.Reset()
-
-			assert := assert2.New(t)
-
-			task := DefinedTaskImpl{}
-			dryRun := true
-			command := "echo foo"
-			args := []string{"bar"}
-			executor = new(MockExecutor)
-
-			executor.On("Execute").Return("error message", fmt.Errorf("mock return"))
-
-			actual := task.runOnce(dryRun, command, args)
-
-			expect := "mock return"
-			assert.Error(actual, expect)
-
-			expect2 := "[ERROR][15:04:05] mock return\n[ERROR][15:04:05] error message\n"
-			assert.Equal(expect2, iobuffer.String())
-		})
+		expect := "[ERROR][15:04:05] mock return\n"
+		assert.Equal(expect, iobuffer.String())
 	})
 
 	t.Run("When no error occured in executor.", func(t *testing.T) {
-		t.Run("And not return output form executor.", func(t *testing.T) {
-			iobuffer.Reset()
+		iobuffer.Reset()
 
-			assert := assert2.New(t)
+		assert := assert2.New(t)
 
-			task := DefinedTaskImpl{}
-			dryRun := true
-			command := "echo foo"
-			args := []string{"bar"}
-			executor = new(MockExecutor)
+		task := DefinedTaskImpl{}
+		dryRun := true
+		command := "echo foo"
+		args := []string{"bar"}
+		executor = new(MockExecutor)
 
-			executor.On("Execute").Return("", nil)
+		executor.On("Execute").Return("", nil)
 
-			actual := task.runOnce(dryRun, command, args)
+		actual := task.runOnce(dryRun, command, args)
 
-			assert.Nil(actual)
+		assert.Nil(actual)
 
-			expected := ""
-			assert.Equal(expected, iobuffer.String())
-		})
-
-		t.Run("And return output form executor.", func(t *testing.T) {
-			iobuffer.Reset()
-
-			assert := assert2.New(t)
-
-			task := DefinedTaskImpl{}
-			dryRun := true
-			command := "echo foo"
-			args := []string{"bar"}
-			executor = new(MockExecutor)
-
-			executor.On("Execute").Return("output message", nil)
-
-			actual := task.runOnce(dryRun, command, args)
-
-			assert.Nil(actual)
-
-			expect2 := "output message\n"
-			assert.Equal(expect2, iobuffer.String())
-		})
+		expected := ""
+		assert.Equal(expected, iobuffer.String())
 	})
 }

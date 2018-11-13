@@ -51,19 +51,10 @@ func (d *DefinedTaskImpl) Run(dryRun bool, args []string) error {
 
 func (d *DefinedTaskImpl) runOnce(dryRun bool, command string, args []string) error {
 	executor := NewExecutor(dryRun, command, args)
-	if out, err := executor.Execute(); err != nil {
+	if err := executor.Execute(); err != nil {
 		Error(err.Error())
-
-		if len(out) > 0 {
-			Error(out)
-		}
-
 		return err
 	} else {
-		if len(out) > 0 {
-			Printf(out)
-		}
-
 		return nil
 	}
 }
