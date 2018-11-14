@@ -101,7 +101,7 @@ build:
 ```
 
 #### Definition of hidden tasks
-Tasks with an underscore at the beginning of the name are not displayed in the task list.
+Tasks with an underscore at the starting of the name are not displayed in the task list.
 
 ```
 test: &test echo test
