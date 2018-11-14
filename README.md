@@ -41,7 +41,7 @@ If you are a Golang developper/user; then execute go get.
 $ go get -u github.com/masato-hi/taskal
 ```
 
-## Config file format
+## Document
 Create taskal.yml in YAML format.
 
 #### Define task
