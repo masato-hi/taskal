@@ -1,6 +1,8 @@
 # taskal
 taskal is a simple and easy task runner.
 
+[![Build Status](https://travis-ci.org/masato-hi/taskal.svg?branch=master)](https://travis-ci.org/masato-hi/taskal)
+
 ## Usage
 ```
 $ taskal [options...] [tasks ...] -- [optional args ...]
